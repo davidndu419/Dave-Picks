@@ -29,8 +29,6 @@ export default function SlipModal({ onClose }: { onClose: () => void }) {
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  console.log('[SlipModal] selections.length=', items.length, 'combinedOdds=', combinedOdds);
-
   const canSave = items.length >= 2;
 
   const bookingCode = `DAVE PICKS — ${formatDate(new Date())}\n${items
@@ -147,8 +145,8 @@ export default function SlipModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
-      <div className="bg-dark-surface w-full max-w-lg rounded-card p-4 shadow-lg">
+    <div className="fixed inset-0 z-[80] bg-black bg-opacity-60 flex items-center justify-center p-4">
+      <div className="relative z-[90] bg-dark-surface w-full max-w-lg rounded-card p-4 shadow-lg">
         <div className="flex flex-col gap-3 mb-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-bold">Accumulator Builder</h3>

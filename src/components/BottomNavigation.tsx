@@ -18,7 +18,7 @@ export function BottomNavigation() {
   const location = useLocation();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-dark-surface border-t border-dark-border">
+    <nav className="fixed bottom-0 left-0 right-0 z-[10] bg-dark-surface border-t border-dark-border">
       <div className="flex justify-around items-center">
         {tabs.map((tab) => {
           const isActive = location.pathname === tab.path;
