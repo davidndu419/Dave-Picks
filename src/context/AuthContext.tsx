@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { AuthContextType, UserProfile } from '../types/auth';
@@ -10,11 +11,18 @@ import {
   sendResetEmail,
   getUserAuthState,
 } from '../services/authService';
+import {
+  createUserProfileIfMissing,
+  getUserProfile,
+  updateUserLastActive,
+} from '../services/userService';
+import type { FirestoreUserProfile } from '../types/user';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null);
+  const [profile, setProfile] = useState<FirestoreUserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,8 +30,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     initializeFirebase();
 
-    const unsubscribe = getUserAuthState((user) => {
+    const unsubscribe = getUserAuthState(async (user) => {
       setUser(user);
+      if (user) {
+        try {
+          // Ensure Firestore profile exists
+          await createUserProfileIfMissing({ uid: user.uid, email: user.email, name: user.displayName || undefined });
+          // Load profile
+          const p = await getUserProfile(user.uid);
+          setProfile(p);
+          // Update last active
+          await updateUserLastActive(user.uid);
+        } catch (err) {
+          console.warn('Error loading/creating user profile', err);
+        }
+      } else {
+        setProfile(null);
+      }
       setIsLoading(false);
     });
 
@@ -38,7 +61,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       setError(null);
       setIsLoading(true);
-      await signUpWithEmail(email, password, displayName);
+      const authUser = await signUpWithEmail(email, password, displayName);
+      // Create Firestore profile
+      await createUserProfileIfMissing({ uid: authUser.uid, email: authUser.email, name: displayName });
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Failed to sign up';
@@ -53,7 +78,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       setError(null);
       setIsLoading(true);
-      await signInWithEmail(email, password);
+      const authUser = await signInWithEmail(email, password);
+      // Update last active and ensure profile exists
+      await createUserProfileIfMissing({ uid: authUser.uid, email: authUser.email, name: authUser.displayName || undefined });
+      await updateUserLastActive(authUser.uid);
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Failed to log in';
@@ -68,7 +96,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       setError(null);
       setIsLoading(true);
-      await signInWithGoogle();
+      const authUser = await signInWithGoogle();
+      await createUserProfileIfMissing({ uid: authUser.uid, email: authUser.email, name: authUser.displayName || undefined });
+      await updateUserLastActive(authUser.uid);
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Failed to sign in with Google';
@@ -85,6 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsLoading(true);
       await logOut();
       setUser(null);
+      setProfile(null);
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Failed to log out';
@@ -116,6 +147,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{
         user,
+        profile,
         isLoading,
         error,
         signup,

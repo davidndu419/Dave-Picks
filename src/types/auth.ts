@@ -1,3 +1,5 @@
+import type { FirestoreUserProfile } from './user';
+
 export type UserProfile = {
   uid: string;
   email: string;
@@ -7,7 +9,10 @@ export type UserProfile = {
 };
 
 export type AuthContextType = {
+  // Authentication user (from Firebase Auth)
   user: UserProfile | null;
+  // Firestore profile (extended user settings)
+  profile: FirestoreUserProfile | null;
   isLoading: boolean;
   error: string | null;
   signup: (email: string, password: string, displayName: string) => Promise<void>;

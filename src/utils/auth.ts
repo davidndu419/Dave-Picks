@@ -1,7 +1,8 @@
 // Utility function to handle Firebase error messages
 export function getErrorMessage(error: unknown): string {
   if (error instanceof Error) {
-    const errorCode = (error as any).code;
+    const errObj = error as { code?: string };
+    const errorCode = errObj.code;
     const errorMessage = error.message;
 
     // Firebase error codes

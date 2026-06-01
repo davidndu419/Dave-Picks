@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
 export function SettingsPage() {
-  const { user, logout } = useAuth();
+  const { user, profile, logout } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -25,8 +25,13 @@ export function SettingsPage() {
 
       <div className="card p-6 mb-6">
         <p className="text-gray-400 text-sm mb-2">Logged in as</p>
-        <p className="text-white font-semibold mb-1">{user?.displayName || user?.email}</p>
-        <p className="text-gray-500 text-sm">{user?.email}</p>
+        <p className="text-white font-semibold mb-1">{profile?.name || user?.displayName || user?.email}</p>
+        <p className="text-gray-500 text-sm">{profile?.email || user?.email}</p>
+        <div className="mt-4 text-sm text-gray-300">
+          <p>Default stake: <span className="text-white font-medium">{profile?.defaultStake ?? '—'}</span></p>
+          <p>Currency: <span className="text-white font-medium">{profile?.currency ?? '—'}</span></p>
+          <p>Confidence threshold: <span className="text-white font-medium">{profile?.confidenceThreshold ?? '—'}%</span></p>
+        </div>
       </div>
 
       <div className="space-y-4">
