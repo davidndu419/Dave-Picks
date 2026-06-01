@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..146,100..900;1,9..146,100..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply antialiased;
+  }
+
+  body {
+    @apply bg-[#0A0A0A] text-white;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold;
+  }
+
+  input, textarea, select {
+    @apply bg-[#141414] border border-[#1A1A1A] text-white;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-[#141414] rounded-[16px] border border-[#1A1A1A];
+  }
+
+  .btn {
+    @apply rounded-[12px] font-medium transition-all duration-300;
+  }
+
+  .btn-primary {
+    @apply btn bg-[#00FF87] text-black hover:opacity-90;
+  }
+
+  .btn-secondary {
+    @apply btn bg-[#141414] border border-[#1A1A1A] text-white hover:bg-[#1A1A1A];
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent text-[#00FF87] hover:bg-[#141414];
+  }
+
+  .input-base {
+    @apply w-full px-4 py-3 bg-[#141414] border border-[#1A1A1A] rounded-[12px] text-white placeholder-gray-500 focus:outline-none focus:border-[#00FF87] transition-all duration-300;
+  }
+
+  .text-mono {
+    font-family: 'DM Mono', monospace;
+  }
+
+  #root {
+    @apply min-h-screen w-full max-w-full mx-auto flex flex-col bg-[#0A0A0A];
+  }
+}
