@@ -3,6 +3,7 @@ import mock from '../data/mockPredictions';
 import PredictionCard from '../components/PredictionCard';
 import { SlipProvider } from '../context/SlipContext';
 import SlipPreviewBar from '../components/SlipPreviewBar';
+import { useAuth } from '../context/AuthContext';
 
 const FILTERS = ['All', 'Football', 'Tennis', 'High Confidence'];
 
@@ -26,8 +27,10 @@ export function TodayPage() {
     return arr;
   }, [filter, sort]);
 
+  const { profile } = useAuth();
+
   return (
-    <SlipProvider>
+    <SlipProvider key={profile?.defaultStake ?? 'default-stake'} initialStake={profile?.defaultStake ?? 1000}>
       <div className="p-4 pb-24">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Dave Picks</h2>

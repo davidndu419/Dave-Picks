@@ -15,10 +15,15 @@ function confidenceColor(conf: number) {
 }
 
 export default function PredictionCard({ p }: { p: Prediction }) {
-  const { add, has } = useSlip();
+  const { add, has, notify } = useSlip();
   const [expanded, setExpanded] = useState(false);
 
-  const handleAdd = () => add(p);
+  const handleAdd = () => {
+    const added = add(p);
+    if (added) notify('Added to Slip');
+  };
+
+  const marketLabel = p.market === 'Match Winner' ? `${p.homeTeam} to Win` : p.market;
 
   return (
     <div className="card p-4 mb-3">
@@ -36,7 +41,7 @@ export default function PredictionCard({ p }: { p: Prediction }) {
             </div>
             <div className="text-right">
               <div className="text-white font-bold text-lg">{p.odds.toFixed(2)}</div>
-              <div className="text-xs text-gray-400">{p.market}</div>
+              <div className="text-xs text-gray-400">{marketLabel}</div>
             </div>
           </div>
 
